@@ -13,9 +13,11 @@ interface MenuButtonProps {
 function MenuButton({ icon, text, className = '' }: MenuButtonProps) {
   const Icon = () => {
     if (React.isValidElement(icon)) {
-      return React.cloneElement(icon, {
-        className: `w-4 h-4 sm:w-5 sm:h-5 ${className}`
-      })
+      const iconProps = {
+        ...icon.props,
+        className: `w-4 h-4 sm:w-5 sm:h-5 ${icon.props.className || ''}`
+      }
+      return React.cloneElement(icon, iconProps)
     }
     return icon
   }
@@ -24,7 +26,7 @@ function MenuButton({ icon, text, className = '' }: MenuButtonProps) {
     <button className="flex items-center justify-between w-full p-3 sm:p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
       <div className="flex items-center gap-2 sm:gap-3">
         <Icon />
-        <span className="text-sm sm:text-base text-gray-700 dark:text-gray-200">{text}</span>
+        <span className={`text-sm sm:text-base text-gray-700 dark:text-gray-200 ${className}`}>{text}</span>
       </div>
       <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
     </button>
@@ -42,6 +44,7 @@ export function MenuSection() {
       <MenuButton 
         icon={<LogOut className="text-red-500" />} 
         text="Выйти" 
+        className="text-red-500"
       />
     </Card>
   )
