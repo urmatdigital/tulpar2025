@@ -14,8 +14,7 @@ function MenuButton({ icon, text, className = '' }: MenuButtonProps) {
   const Icon = () => {
     if (React.isValidElement(icon)) {
       return React.cloneElement(icon, {
-        size: 18,
-        className: `sm:w-5 sm:h-5 ${className}`
+        className: `w-4 h-4 sm:w-5 sm:h-5 ${className}`
       })
     }
     return icon
@@ -27,7 +26,7 @@ function MenuButton({ icon, text, className = '' }: MenuButtonProps) {
         <Icon />
         <span className="text-sm sm:text-base text-gray-700 dark:text-gray-200">{text}</span>
       </div>
-      <ChevronRight size={16} className="text-gray-400 dark:text-gray-500" />
+      <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
     </button>
   )
 }
