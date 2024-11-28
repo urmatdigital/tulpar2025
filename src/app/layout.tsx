@@ -1,12 +1,16 @@
+import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import { Providers } from '@/components/Providers'
+import { Container } from '@/components/ui/Container'
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 
 export const metadata: Metadata = {
-  title: 'TULPAR EXPRESS - Сервис отслеживания посылок',
-  description: 'Современный веб-сервис для отслеживания посылок с интеграцией Telegram и расширенными функциями администрирования',
+  title: 'TULPAR - Logistics & Delivery Services',
+  description: 'Fast and reliable logistics and delivery services',
 }
 
 export default function RootLayout({
@@ -15,8 +19,20 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Providers>
+          <Header />
+          <main className="min-h-[calc(100vh-4rem)] py-6">
+            <Container>
+              <div className="space-y-6">
+                {children}
+              </div>
+            </Container>
+          </main>
+          <Footer />
+        </Providers>
+      </body>
     </html>
   )
 }
