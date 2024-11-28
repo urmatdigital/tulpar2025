@@ -3,12 +3,12 @@
 import { Copy } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 
-interface AddressItemProps {
+export interface AddressItemProps {
   label: string
   value: string
 }
 
-function AddressItem({ label, value }: AddressItemProps) {
+export function AddressItem({ label, value }: AddressItemProps) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{label}</span>

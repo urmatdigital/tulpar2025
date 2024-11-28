@@ -2,9 +2,11 @@
 
 import React from 'react'
 import { User, Copy, Bell, Package, Truck, MapPin } from 'lucide-react'
+import { useStore } from '@/lib/store'
+import { Container } from '@/components/ui/Container'
 import { Card } from '@/components/ui/Card'
 import { StatsCard } from '@/components/dashboard/StatsCard'
-import { AddressItem } from '@/components/dashboard/AddressSection'
+import { AddressSection } from '@/components/dashboard/AddressSection'
 import { BottomNav } from '@/components/dashboard/BottomNav'
 
 export default function ProfilePage() {
@@ -49,15 +51,15 @@ export default function ProfilePage() {
         </div>
         
         <div className="space-y-4">
-          <AddressItem 
+          <AddressSection 
             label="Адрес"
             value="广州市番禺区市广路钟二路段45号华家领航产业园1栋 107 思密特 1226308"
           />
-          <AddressItem 
+          <AddressSection 
             label="Телефон"
             value="+8618924053083"
           />
-          <AddressItem 
+          <AddressSection 
             label="ID номер"
             value="Si mi te (1226308)"
           />
