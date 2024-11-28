@@ -16,7 +16,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push('/')
+      router.push('/login')
     }
   }, [user, router])
 
@@ -24,11 +24,14 @@ export default function DashboardPage() {
     return null
   }
 
+  const fullName = user.user_metadata?.full_name || 'Гость'
+  const userId = `TE-${user.id.slice(0, 4)}`
+
   return (
     <>
       {/* Header with Avatar */}
       <Card className="p-4 sm:p-6">
-        <UserProfile name="Урмат Мырзабеков" userId="TE-8963" />
+        <UserProfile name={fullName} userId={userId} />
         <StatsGrid />
       </Card>
 

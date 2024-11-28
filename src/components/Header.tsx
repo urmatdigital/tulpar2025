@@ -9,11 +9,18 @@ import ThemeToggle from './ThemeToggle'
 import MobileMenu from './MobileMenu'
 import { Card } from './ui/Card'
 import { Container } from './ui/Container'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const user = useStore((state) => state.user)
   const logout = useStore((state) => state.logout)
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logout()
+    router.push('/login')
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-transparent backdrop-blur-sm">
@@ -63,14 +70,18 @@ export default function Header() {
             {user && (
               <>
                 {/* Mobile User Menu */}
-                <div className="md:hidden">
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center rounded-lg p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={() => setShowMobileMenu(true)}
+                <div className="md:hidden flex items-center gap-2">
+                  <Link
+                    href="/dashboard"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
                   >
-                    <span className="sr-only">Открыть меню</span>
-                    <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                    Профиль
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="rounded-lg bg-gray-100 dark:bg-gray-800 px-3 py-1.5 text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                  >
+                    Выйти
                   </button>
                 </div>
 
@@ -83,7 +94,7 @@ export default function Header() {
                     Личный кабинет
                   </Link>
                   <button
-                    onClick={() => logout()}
+                    onClick={handleLogout}
                     className="rounded-lg bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                   >
                     Выйти

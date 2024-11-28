@@ -10,6 +10,7 @@ interface UserState {
   loading: boolean
   error: string | null
   packages: Package[]
+  setUser: (user: any) => void
   addPackage: (package_: Package) => void
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string) => Promise<void>
@@ -24,6 +25,10 @@ export const useStore = create<UserState>()(
       loading: false,
       error: null,
       packages: [],
+
+      setUser: (user) => {
+        set({ user })
+      },
 
       addPackage: (package_: Package) => {
         set((state) => ({
@@ -62,11 +67,7 @@ export const useStore = create<UserState>()(
           if (error) throw error
           set({ user: data.user })
         } catch (error: any) {
-          set({ 
-            error: error.message === 'Email already registered'
-              ? 'Этот email уже зарегистрирован'
-              : 'Ошибка при регистрации'
-          })
+          set({ error: 'Ошибка при регистрации' })
           throw error
         } finally {
           set({ loading: false })
@@ -88,11 +89,7 @@ export const useStore = create<UserState>()(
           if (error) throw error
           set({ user: data.user })
         } catch (error: any) {
-          set({ 
-            error: error.message === 'Email already registered'
-              ? 'Этот email уже зарегистрирован'
-              : 'Ошибка при регистрации'
-          })
+          set({ error: 'Ошибка при регистрации' })
           throw error
         } finally {
           set({ loading: false })
