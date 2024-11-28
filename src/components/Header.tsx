@@ -6,13 +6,11 @@ import { Bars3Icon } from '@heroicons/react/24/outline'
 import { useStore } from '@/lib/store'
 import { Logo } from '@/assets/logo'
 import ThemeToggle from './ThemeToggle'
-import AuthModal from './AuthModal'
 import MobileMenu from './MobileMenu'
 import { Card } from './ui/Card'
 import { Container } from './ui/Container'
 
 export default function Header() {
-  const [showAuthModal, setShowAuthModal] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const user = useStore((state) => state.user)
   const logout = useStore((state) => state.logout)
@@ -25,7 +23,7 @@ export default function Header() {
           <div className="flex items-center flex-1">
             <Link href="/" className="flex items-center gap-3">
               <Logo className="h-10 w-auto" />
-              <span className="text-xl font-bold text-gray-900 dark:text-white tracking-wide">
+              <span className="text-xl font-bold text-gray-900 dark:text-white tracking-wide md:leading-normal leading-tight">
                 TULPAR <span className="text-blue-600 dark:text-blue-400">EXPRESS</span>
               </span>
             </Link>
@@ -36,10 +34,48 @@ export default function Header() {
             {/* Theme Toggle - Always visible */}
             <ThemeToggle />
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center">
-              {user ? (
-                <div className="flex items-center gap-4">
+            {/* Authentication Buttons - Both Mobile and Desktop */}
+            {!user && (
+              <>
+                {/* Mobile Auth Buttons */}
+                <div className="md:hidden flex items-center gap-2">
+                  <Link
+                    href="/login"
+                    className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-500"
+                  >
+                    Войти
+                  </Link>
+                </div>
+
+                {/* Desktop Auth Buttons */}
+                <div className="hidden md:flex items-center gap-4">
+                  <Link
+                    href="/login"
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-500"
+                  >
+                    Войти
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {/* User Menu - When Logged In */}
+            {user && (
+              <>
+                {/* Mobile User Menu */}
+                <div className="md:hidden">
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center rounded-lg p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setShowMobileMenu(true)}
+                  >
+                    <span className="sr-only">Открыть меню</span>
+                    <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                  </button>
+                </div>
+
+                {/* Desktop User Menu */}
+                <div className="hidden md:flex items-center gap-4">
                   <Link
                     href="/dashboard"
                     className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
@@ -53,42 +89,19 @@ export default function Header() {
                     Выйти
                   </button>
                 </div>
-              ) : (
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:hover:bg-blue-500"
-                >
-                  Войти
-                </button>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="flex md:hidden">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-lg p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                onClick={() => setShowMobileMenu(true)}
-              >
-                <span className="sr-only">Открыть меню</span>
-                <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
+              </>
+            )}
           </div>
         </Card>
       </Container>
 
-      {/* Mobile Menu */}
-      <MobileMenu
-        isOpen={showMobileMenu}
-        onClose={() => setShowMobileMenu(false)}
-      />
-
-      {/* Auth Modal */}
-      <AuthModal 
-        show={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-      />
+      {/* Mobile Menu - Only for Logged In Users */}
+      {user && (
+        <MobileMenu
+          isOpen={showMobileMenu}
+          onClose={() => setShowMobileMenu(false)}
+        />
+      )}
     </header>
   )
 }
