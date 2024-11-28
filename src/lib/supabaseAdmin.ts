@@ -1,19 +1,220 @@
 import { createClient } from '@supabase/supabase-js'
-import { Database } from '@/types/supabase'
+import type { Database } from '@/types/supabase'
 
-const supabaseUrl = 'https://eacpkbrvpxhejgwyziwd.supabase.co'
-const supabaseServiceKey = 'sbp_f2e846f3db4ab509385992fa663f65d3fb15c58e'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// Создаем клиент с сервисным ключом для полного доступа
-export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: false,
-  },
-  db: {
-    schema: 'public'
+if (!supabaseUrl) {
+  throw new Error('Missing env.NEXT_PUBLIC_SUPABASE_URL')
+}
+if (!supabaseServiceKey) {
+  throw new Error('Missing env.SUPABASE_SERVICE_ROLE_KEY')
+}
+
+// Create a custom type that extends Database with our custom functions
+interface CustomDatabase extends Omit<Database, 'public'> {
+  public: {
+    Tables: Database['public']['Tables']
+    Views: Database['public']['Views']
+    Functions: {
+      create_table: {
+        Args: {
+          table_name: string
+          column_definitions: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+      alter_table: {
+        Args: {
+          table_name: string
+          alter_operation: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+      drop_table: {
+        Args: {
+          table_name: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+      create_index: {
+        Args: {
+          table_name: string
+          index_name: string
+          column_name: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+      drop_index: {
+        Args: {
+          table_name: string
+          index_name: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+      grant_access: {
+        Args: {
+          table_name: string
+          role_name: string
+          permission: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+      revoke_access: {
+        Args: {
+          table_name: string
+          role_name: string
+          permission: string
+        }
+        Returns: {
+          success: boolean
+        }
+      }
+    }
+    Enums: Database['public']['Enums']
   }
-})
+}
+
+// Create Supabase admin client
+export const supabaseAdmin = createClient<CustomDatabase>(
+  supabaseUrl,
+  supabaseServiceKey,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+    db: {
+      schema: 'public'
+    }
+  }
+)
+
+// Database management functions
+export const database = {
+  async createTable(tableName: string, columns: Record<string, string>) {
+    try {
+      const columnDefinitions = Object.entries(columns)
+        .map(([name, type]) => `${name} ${type}`)
+        .join(', ')
+
+      const { error } = await supabaseAdmin.rpc('create_table', {
+        table_name: tableName,
+        column_definitions: columnDefinitions
+      })
+
+      if (error) throw error
+      console.log(`Table ${tableName} created successfully`)
+    } catch (error) {
+      console.error('Error creating table:', error)
+      throw error
+    }
+  },
+
+  async alterTable(tableName: string, operation: string) {
+    try {
+      const { error } = await supabaseAdmin.rpc('alter_table', {
+        table_name: tableName,
+        alter_operation: operation
+      })
+
+      if (error) throw error
+      console.log(`Table ${tableName} altered successfully`)
+    } catch (error) {
+      console.error('Error altering table:', error)
+      throw error
+    }
+  },
+
+  async dropTable(tableName: string) {
+    try {
+      const { error } = await supabaseAdmin.rpc('drop_table', {
+        table_name: tableName
+      })
+
+      if (error) throw error
+      console.log(`Table ${tableName} dropped successfully`)
+    } catch (error) {
+      console.error('Error dropping table:', error)
+      throw error
+    }
+  },
+
+  async createIndex(tableName: string, indexName: string, columnName: string) {
+    try {
+      const { error } = await supabaseAdmin.rpc('create_index', {
+        table_name: tableName,
+        index_name: indexName,
+        column_name: columnName
+      })
+
+      if (error) throw error
+      console.log(`Index ${indexName} created successfully on ${tableName}.${columnName}`)
+    } catch (error) {
+      console.error('Error creating index:', error)
+      throw error
+    }
+  },
+
+  async dropIndex(tableName: string, indexName: string) {
+    try {
+      const { error } = await supabaseAdmin.rpc('drop_index', {
+        table_name: tableName,
+        index_name: indexName
+      })
+
+      if (error) throw error
+      console.log(`Index ${indexName} dropped successfully from ${tableName}`)
+    } catch (error) {
+      console.error('Error dropping index:', error)
+      throw error
+    }
+  },
+
+  async grantAccess(tableName: string, roleName: string, permission: string) {
+    try {
+      const { error } = await supabaseAdmin.rpc('grant_access', {
+        table_name: tableName,
+        role_name: roleName,
+        permission
+      })
+
+      if (error) throw error
+      console.log(`${permission} permission granted to ${roleName} on ${tableName}`)
+    } catch (error) {
+      console.error('Error granting access:', error)
+      throw error
+    }
+  },
+
+  async revokeAccess(tableName: string, roleName: string, permission: string) {
+    try {
+      const { error } = await supabaseAdmin.rpc('revoke_access', {
+        table_name: tableName,
+        role_name: roleName,
+        permission
+      })
+
+      if (error) throw error
+      console.log(`${permission} permission revoked from ${roleName} on ${tableName}`)
+    } catch (error) {
+      console.error('Error revoking access:', error)
+      throw error
+    }
+  }
+}
 
 // Утилиты для работы с хранилищем S3
 const s3Config = {
@@ -185,37 +386,7 @@ export const adminApi = {
   },
 
   // Управление базой данных
-  database: {
-    async createTable(tableName: string, columns: Record<string, string>) {
-      const columnDefinitions = Object.entries(columns)
-        .map(([name, type]) => `${name} ${type}`)
-        .join(', ')
-
-      const { error } = await supabaseAdmin.rpc('create_table', {
-        table_name: tableName,
-        column_definitions: columnDefinitions
-      })
-
-      if (error) throw error
-    },
-
-    async alterTable(tableName: string, operation: string) {
-      const { error } = await supabaseAdmin.rpc('alter_table', {
-        table_name: tableName,
-        alter_operation: operation
-      })
-
-      if (error) throw error
-    },
-
-    async dropTable(tableName: string) {
-      const { error } = await supabaseAdmin.rpc('drop_table', {
-        table_name: tableName
-      })
-
-      if (error) throw error
-    }
-  },
+  database: database,
 
   // Управление хранилищем
   storage: {

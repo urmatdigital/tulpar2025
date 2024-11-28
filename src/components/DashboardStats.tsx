@@ -5,16 +5,24 @@ import { api } from '@/lib/api'
 import { useStore } from '@/lib/store'
 import { useTranslation } from '@/hooks/useTranslation'
 import type { Database } from '@/types/supabase'
+import type { TranslationKey } from '@/types/translations'
 
 type Package = Database['public']['Tables']['packages']['Row']
+type StatId = 'users' | 'projects' | 'tasks'
+
+interface Stat {
+  id: StatId
+  value: string
+  translationKey: TranslationKey
+}
 
 export default function DashboardStats() {
   const { t } = useTranslation()
 
-  const stats = [
-    { id: 'users', value: '8,000+' },
-    { id: 'projects', value: '500+' },
-    { id: 'tasks', value: '15,000+' },
+  const stats: Stat[] = [
+    { id: 'users', value: '8,000+', translationKey: 'dashboard.stats.users' },
+    { id: 'projects', value: '500+', translationKey: 'dashboard.stats.projects' },
+    { id: 'tasks', value: '15,000+', translationKey: 'dashboard.stats.tasks' },
   ]
 
   return (
@@ -30,7 +38,7 @@ export default function DashboardStats() {
             {stats.map((stat) => (
               <div key={stat.id} className="flex flex-col bg-gray-50 dark:bg-gray-700 p-8">
                 <dt className="text-sm font-medium leading-6 text-gray-600 dark:text-gray-300">
-                  {t(`dashboard.stats.${stat.id}`)}
+                  {t(stat.translationKey)}
                 </dt>
                 <dd className="order-first text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">
                   {stat.value}
