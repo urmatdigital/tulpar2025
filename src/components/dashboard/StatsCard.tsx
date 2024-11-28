@@ -11,10 +11,11 @@ interface StatsCardProps {
 export function StatsCard({ icon, title, value }: StatsCardProps) {
   const Icon = () => {
     if (React.isValidElement(icon)) {
-      return React.cloneElement(icon, {
-        size: 16,
-        className: 'sm:w-5 sm:h-5 text-primary dark:text-primary/90'
-      })
+      const iconProps = {
+        ...icon.props,
+        className: `w-4 h-4 sm:w-5 sm:h-5 text-primary dark:text-primary/90 ${icon.props.className || ''}`
+      }
+      return React.cloneElement(icon, iconProps)
     }
     return icon
   }
