@@ -11,21 +11,25 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession()
 
   // Список публичных путей, доступных без авторизации
-  const publicPaths = ['/', '/login', '/register', '/forgot-password']
+  const publicPaths = ['/', '/login', '/register']
   const isPublicPath = publicPaths.includes(req.nextUrl.pathname)
 
   // Защищенные пути, требующие авторизации
   const protectedPaths = ['/dashboard', '/profile']
   const isProtectedPath = protectedPaths.some(path => req.nextUrl.pathname.startsWith(path))
 
-  if (!session && isProtectedPath) {
-    // Если пользователь не авторизован и пытается получить доступ к защищенному пути
-    return NextResponse.redirect(new URL('/login', req.url))
-  }
-
-  if (session && isPublicPath && req.nextUrl.pathname !== '/') {
-    // Если пользователь авторизован и пытается получить доступ к странице входа/регистрации
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+  if (!session) {
+    // Если пользователь не авторизован
+    if (isProtectedPath) {
+      // И пытается получить доступ к защищенному пути
+      return NextResponse.redirect(new URL('/login', req.url))
+    }
+  } else {
+    // Если пользователь авторизован
+    if (isPublicPath && req.nextUrl.pathname !== '/') {
+      // И пытается получить доступ к странице входа/регистрации
+      return NextResponse.redirect(new URL('/dashboard', req.url))
+    }
   }
 
   return res
@@ -40,6 +44,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)',
   ],
 }

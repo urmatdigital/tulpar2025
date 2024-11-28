@@ -18,8 +18,15 @@ export default function Header() {
   const router = useRouter()
 
   const handleLogout = async () => {
-    await logout()
-    router.push('/login')
+    try {
+      await logout()
+      // Принудительно перенаправляем на страницу входа
+      router.push('/login')
+      // Очищаем историю навигации
+      router.refresh()
+    } catch (error) {
+      console.error('Ошибка при выходе:', error)
+    }
   }
 
   return (

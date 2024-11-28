@@ -4,13 +4,14 @@ import { useState } from 'react'
 import { useStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/Card'
-import { Mail, Lock, Eye, EyeOff, ChevronRight, ArrowLeft, User } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ChevronRight, ArrowLeft, User, Phone } from 'lucide-react'
 import Link from 'next/link'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -23,10 +24,15 @@ export default function RegisterPage() {
     setError('')
 
     try {
-      await register(email, password, name)
-      router.push('/dashboard')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Произошла ошибка при регистрации')
+      const session = await register(email, password, name, phone)
+      if (session) {
+        router.replace('/dashboard')
+      } else {
+        setError('Не удалось войти в систему. Пожалуйста, попробуйте снова.')
+      }
+    } catch (err: any) {
+      // Показываем пользователю понятное сообщение об ошибке
+      setError(err.message || 'Произошла ошибка при регистрации')
     } finally {
       setLoading(false)
     }
@@ -50,14 +56,14 @@ export default function RegisterPage() {
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Создать аккаунт</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Зарегистрируйтесь в Tulpar Express
+              Введите свои данные для регистрации
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name Input */}
-            <div className="space-y-2">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="space-y-1">
+              <label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Имя
               </label>
               <div className="relative">
@@ -66,19 +72,17 @@ export default function RegisterPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                  placeholder="Введите ваше имя"
                   required
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  placeholder="Ваше имя"
                 />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
+                <User className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
               </div>
             </div>
 
             {/* Email Input */}
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="space-y-1">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </label>
               <div className="relative">
@@ -87,19 +91,35 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                  placeholder="your@email.com"
                   required
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  placeholder="example@email.com"
                 />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
+                <Mail className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+              </div>
+            </div>
+
+            {/* Phone Input */}
+            <div className="space-y-1">
+              <label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Телефон (необязательно)
+              </label>
+              <div className="relative">
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  placeholder="+7 (999) 999-99-99"
+                />
+                <Phone className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
               </div>
             </div>
 
             {/* Password Input */}
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="space-y-1">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Пароль
               </label>
               <div className="relative">
@@ -108,29 +128,23 @@ export default function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                  placeholder="••••••••"
                   required
+                  className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  placeholder="••••••••"
                 />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
+                <Lock className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
             {error && (
-              <div className="text-sm text-red-600 dark:text-red-400">
+              <div className="text-sm text-red-500 dark:text-red-400">
                 {error}
               </div>
             )}
@@ -138,26 +152,24 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed dark:hover:bg-blue-500 dark:focus:ring-blue-400"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 'Загрузка...'
               ) : (
                 <>
-                  Зарегистрироваться
-                  <ChevronRight className="ml-2 -mr-1 w-4 h-4" />
+                  Создать аккаунт
+                  <ChevronRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Уже есть аккаунт?{' '}
-              <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-                Войти
-              </Link>
-            </p>
+          <div className="text-center text-sm">
+            <span className="text-gray-500 dark:text-gray-400">Уже есть аккаунт? </span>
+            <Link href="/login" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+              Войти
+            </Link>
           </div>
         </Card>
       </div>
