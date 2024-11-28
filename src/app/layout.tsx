@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { Providers } from '@/components/Providers'
-import { Container } from '@/components/ui/Container'
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 
@@ -23,12 +22,8 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <Header />
-          <main className="min-h-[calc(100vh-4rem)] py-6">
-            <Container>
-              <div className="space-y-6">
-                {children}
-              </div>
-            </Container>
+          <main className="min-h-[calc(100vh-4rem)] py-3">
+            {children}
           </main>
           <Footer />
         </Providers>

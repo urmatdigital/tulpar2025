@@ -18,9 +18,9 @@ export default function Header() {
   const logout = useStore((state) => state.logout)
 
   return (
-    <header className="bg-gray-50 dark:bg-gray-900 py-2">
+    <header className="sticky top-0 z-50 bg-transparent backdrop-blur-sm">
       <Container>
-        <Card className="flex w-full items-center justify-between py-3">
+        <Card className="flex w-full items-center justify-between py-3 rounded-xl sm:rounded-2xl">
           {/* Logo and Company Name - Always visible */}
           <div className="flex items-center flex-1">
             <Link href="/" className="flex items-center gap-3">

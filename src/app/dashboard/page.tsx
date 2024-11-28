@@ -3,7 +3,12 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/lib/store'
-import DashboardStats from '@/components/DashboardStats'
+import { UserProfile } from '@/components/dashboard/UserProfile'
+import { StatsGrid } from '@/components/dashboard/StatsGrid'
+import { AddressSection } from '@/components/dashboard/AddressSection'
+import { MenuSection } from '@/components/dashboard/MenuSection'
+import { BottomNav } from '@/components/dashboard/BottomNav'
+import { Card } from '@/components/ui/Card'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -20,11 +25,22 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">
-        Личный кабинет
-      </h1>
-      <DashboardStats />
-    </div>
+    <>
+      {/* Header with Avatar */}
+      <Card className="p-4 sm:p-6">
+        <UserProfile name="Урмат Мырзабеков" userId="TE-8963" />
+        <StatsGrid />
+      </Card>
+
+      <AddressSection />
+      <MenuSection />
+
+      {/* Version */}
+      <div className="text-center text-gray-500 dark:text-gray-400 text-xs sm:text-sm mt-6 sm:mt-8 mb-20">
+        Версия приложения 3.0.69
+      </div>
+
+      <BottomNav />
+    </>
   )
 }
