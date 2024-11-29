@@ -1,34 +1,71 @@
 'use client'
 
-import React, { ReactNode } from 'react'
+import React from 'react'
+import { ArrowDown, ArrowUp, LucideIcon, Minus } from 'lucide-react'
+import { Card } from '@/components/ui/Card'
+import { cn } from '@/lib/utils'
 
-interface StatsCardProps {
-  icon: ReactNode
+export interface StatsCardProps {
+  icon: LucideIcon
   title: string
   value: string
+  description?: string
+  trend?: 'up' | 'down' | 'neutral'
+  trendValue?: string
 }
 
-export function StatsCard({ icon, title, value }: StatsCardProps) {
-  const Icon = () => {
-    if (React.isValidElement(icon)) {
-      const iconProps = {
-        ...icon.props,
-        className: `w-4 h-4 sm:w-5 sm:h-5 text-primary dark:text-primary/90 ${icon.props.className || ''}`
-      }
-      return React.cloneElement(icon, iconProps)
+export function StatsCard({ 
+  icon: Icon, 
+  title, 
+  value, 
+  description,
+  trend = 'neutral',
+  trendValue
+}: StatsCardProps) {
+  const getTrendIcon = () => {
+    switch (trend) {
+      case 'up':
+        return <ArrowUp className="w-4 h-4 text-green-500" />
+      case 'down':
+        return <ArrowDown className="w-4 h-4 text-red-500" />
+      default:
+        return <Minus className="w-4 h-4 text-gray-400" />
     }
-    return icon
+  }
+
+  const getTrendColor = () => {
+    switch (trend) {
+      case 'up':
+        return 'text-green-500'
+      case 'down':
+        return 'text-red-500'
+      default:
+        return 'text-gray-400'
+    }
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-2 sm:p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+    <Card variant="outline" padding="sm" className="hover:shadow-md transition-shadow">
+      <div className="flex items-center gap-2 mb-2">
         <div className="text-primary dark:text-primary/90">
-          <Icon />
+          <Icon className="w-5 h-5" />
         </div>
-        <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 truncate">{title}</span>
+        <span className="text-sm text-gray-600 dark:text-gray-300 truncate">{title}</span>
       </div>
-      <span className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">{value}</span>
-    </div>
+      <div className="space-y-1">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-semibold text-gray-900 dark:text-white">{value}</span>
+          {trendValue && (
+            <div className="flex items-center gap-0.5">
+              {getTrendIcon()}
+              <span className={cn('text-sm font-medium', getTrendColor())}>{trendValue}</span>
+            </div>
+          )}
+        </div>
+        {description && (
+          <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        )}
+      </div>
+    </Card>
   )
 }

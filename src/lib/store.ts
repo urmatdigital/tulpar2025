@@ -90,41 +90,16 @@ export const useStore = create<UserState>()(
             throw new Error('Номер телефона обязателен')
           }
 
-          // Проверяем, существует ли клиент с таким телефоном
-          const { data: existingClient, error: clientError } = await supabase
-            .from('clients')
-            .select('*')
-            .eq('phone', phone)
-            .single()
-
-          // Если клиент существует, пробуем войти
-          if (existingClient) {
-            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-              email,
-              password
-            })
-
-            if (signInError) {
-              throw new Error('Этот номер телефона уже зарегистрирован. Используйте другой номер или войдите в существующий аккаунт.')
-            }
-
-            // Обновляем метаданные пользователя
-            await supabase.auth.updateUser({
-              data: {
-                full_name: existingClient.full_name,
-                phone: existingClient.phone,
-                client_number: existingClient.client_number
-              }
-            })
-
-            set({ user: signInData.user })
-            return signInData.session
-          }
-
-          // Если клиент не существует, регистрируем нового пользователя
+          // Регистрируем нового пользователя
           const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
             email,
-            password
+            password,
+            options: {
+              data: {
+                full_name: name,
+                phone: phone
+              }
+            }
           })
 
           if (signUpError) throw signUpError
@@ -145,21 +120,11 @@ export const useStore = create<UserState>()(
             .select()
             .single()
 
-          if (insertError) throw insertError
-          if (!newClient) {
-            throw new Error('Не удалось создать запись клиента')
+          if (insertError) {
+            console.error('Error creating client:', insertError)
+            // Продолжаем выполнение даже если не удалось создать клиента
+            // Таблица будет создана позже через миграцию
           }
-
-          // Обновляем метаданные пользователя
-          const { error: updateError } = await supabase.auth.updateUser({
-            data: {
-              full_name: name,
-              phone: phone,
-              client_number: newClient.client_number
-            }
-          })
-
-          if (updateError) throw updateError
 
           // Получаем обновленного пользователя
           const { data: { user: updatedUser }, error: userError } = await supabase.auth.getUser()

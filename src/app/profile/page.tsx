@@ -13,7 +13,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Header with Avatar */}
-      <Card className="p-4 sm:p-6 rounded-b-2xl">
+      <Card variant="default" padding="md" className="rounded-b-2xl">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
@@ -42,7 +42,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* Address Section */}
-      <Card className="mt-4 p-4 sm:p-6 mx-2 sm:mx-4">
+      <Card variant="default" padding="md" className="mt-4 mx-2 sm:mx-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200">Адрес склада в Китае</h3>
           <div className="px-2 sm:px-3 py-1 bg-blue-100 dark:bg-blue-900/50 rounded-full">

@@ -65,7 +65,7 @@ export default function TrackPage() {
           Отследить посылку
         </h1>
 
-        <Card className="p-6 mb-6">
+        <Card variant="default" padding="md" className="mb-6">
           <form onSubmit={handleTrack} className="space-y-4">
             <div className="flex items-center gap-2">
               <Search className="w-5 h-5 text-gray-400" />
@@ -85,10 +85,10 @@ export default function TrackPage() {
           </form>
         </Card>
 
-        {trackingData.length > 0 && (
+        {trackingData.length > 0 ? (
           <div className="space-y-4">
             {trackingData.map((status, index) => (
-              <Card key={index} className="p-6">
+              <Card variant="default" padding="md" key={index}>
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
                     {status.status === 'В пути' ? (
@@ -118,6 +118,12 @@ export default function TrackPage() {
               </Card>
             ))}
           </div>
+        ) : (
+          <Card variant="secondary" padding="md" className="text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Введите номер отслеживания, чтобы начать поиск
+            </p>
+          </Card>
         )}
       </div>
     </div>

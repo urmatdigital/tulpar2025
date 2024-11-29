@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Logo and Company Info */}
+            {/* Логотип и информация о компании */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Logo className="h-8 w-auto" />
@@ -18,51 +18,51 @@ export default function Footer() {
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Delivering excellence in logistics and transportation services
+                Высокое качество логистических и транспортных услуг
               </p>
             </div>
 
-            {/* Quick Links */}
+            {/* Быстрые ссылки */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase">
-                Quick Links
+                Навигация
               </h3>
               <ul className="space-y-2">
                 <li>
                   <Link href="/about" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
-                    About Us
+                    О нас
                   </Link>
                 </li>
                 <li>
                   <Link href="/services" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
-                    Services
+                    Услуги
                   </Link>
                 </li>
                 <li>
                   <Link href="/contact" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
-                    Contact
+                    Контакты
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Contact Info */}
+            {/* Контактная информация */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase">
-                Contact
+                Контакты
               </h3>
               <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                <li>Phone: +1 234 567 890</li>
-                <li>Email: info@tulparexpress.com</li>
-                <li>Address: Your Address Here</li>
+                <li>Телефон: +996 (501) 18-88-38</li>
+                <li>Email: info@te.kg</li>
+                <li>Адрес: г. Бишкек, ул.Ахматбека Суюмбаева, 123/1</li><li>Адрес: г. Ош, ул. Примерная, 123</li><li>Адрес: г. Талас>, ул. Примерная, 123</li>
               </ul>
             </div>
           </div>
 
-          {/* Copyright */}
+          {/* Авторские права */}
           <div className="border-t border-gray-200 dark:border-gray-700 mt-8 pt-4">
             <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-              {new Date().getFullYear()} Tulpar Express. All rights reserved.
+              {new Date().getFullYear()} Tulpar Express. Все права защищены.
             </p>
           </div>
         </div>
