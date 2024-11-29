@@ -26,7 +26,7 @@
 
 1. Клонируйте репозиторий:
 ```bash
-git clone https://github.com/your-username/tulpar2025.git
+git clone https://github.com/urmatdigital/tulpar2025.git
 ```
 
 2. Установите зависимости:
